@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     public float gravityScale = 1f;  // 自定義重力縮放
     public float volumeThreshold = 0.04f; // 聲音門檻
     private Rigidbody2D rb;
+    private Animator animator;
+    public bool isGrounded = true;  // 判斷是否在地面上
     // private MicrophoneInput microphoneInput;
     private WebGLMicrophoneInput microphoneInput;
 
@@ -18,6 +20,7 @@ public class PlayerController : MonoBehaviour
         rb.gravityScale = gravityScale; // 設置重力縮放
         // microphoneInput = FindObjectOfType<MicrophoneInput>();
         microphoneInput = FindObjectOfType<WebGLMicrophoneInput>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -30,6 +33,15 @@ public class PlayerController : MonoBehaviour
 
         // 根據音量調整角色的垂直和水平速度
         Move(volume);
+
+        if (rb.velocity.y > 0)
+        {
+            animator.SetBool("IsFly", true);
+        }
+        else if (isGrounded) // 當角色碰到地面，設置 IsFly 為 false
+        {
+            animator.SetBool("IsFly", false);
+        }
     }
 
     void FixedUpdate()
@@ -47,5 +59,26 @@ public class PlayerController : MonoBehaviour
         float horizontalSpeed = volume > volumeThreshold ? forwardSpeed : 0f;
 
         rb.velocity = new Vector2(horizontalSpeed, jumpForce);
+    }
+
+    // 當角色碰到地面時觸發
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // 檢測是否碰到地面，並更新isGrounded狀態
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+            animator.SetBool("IsFly", false);  // 當碰到地面時，停止飛行動畫
+        }
+    }
+
+    // 當角色離開地面時觸發
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        // 檢測是否離開地面，並更新isGrounded狀態
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
     }
 }
