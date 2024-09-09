@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public float gravityScale = 1f;  // 自定義重力縮放
     public float volumeThreshold = 0.04f; // 聲音門檻
     private Rigidbody2D rb;
-    private Animator animator;
+    public Animator animator;
     public bool isGrounded = true;  // 判斷是否在地面上
     // private MicrophoneInput microphoneInput;
     private WebGLMicrophoneInput microphoneInput;
@@ -20,7 +20,6 @@ public class PlayerController : MonoBehaviour
         rb.gravityScale = gravityScale; // 設置重力縮放
         // microphoneInput = FindObjectOfType<MicrophoneInput>();
         microphoneInput = FindObjectOfType<WebGLMicrophoneInput>();
-        animator = GetComponent<Animator>();
     }
 
     void Update()
